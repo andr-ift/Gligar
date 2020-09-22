@@ -9,7 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.opensooq.OpenSooq.ui.imagePicker.model.ImageItem
+import com.opensooq.OpenSooq.ui.imagePicker.model.MediaItem
 import com.opensooq.OpenSooq.ui.imagePicker.model.ImageSource
 import com.opensooq.supernova.gligar.R
 
@@ -20,7 +20,7 @@ import com.opensooq.supernova.gligar.R
 
 internal class ImagesAdapter(var clickListener: ItemClickListener) :
     RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>() {
-    var images = arrayListOf<ImageItem>()
+    var images = arrayListOf<MediaItem>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder =
         ImageViewHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -55,6 +55,10 @@ internal class ImagesAdapter(var clickListener: ItemClickListener) :
             }
             Glide.with(holder.img).load(data.imagePath)
                 .transition(DrawableTransitionOptions().crossFade()).into(holder.img)
+            if (data.isVideo)
+                holder.videoIndicator.visibility = View.VISIBLE
+            else
+                holder.videoIndicator.visibility = View.GONE
             return
         }
         if (data.source== ImageSource.CAMERA) {
@@ -69,5 +73,6 @@ internal class ImagesAdapter(var clickListener: ItemClickListener) :
         val imgView: View = itemView.findViewById(R.id.image_view)
         val captureView: View = itemView.findViewById(R.id.capture_view)
         val img: ImageView = itemView.findViewById(R.id.img_image)
+        val videoIndicator: View = itemView.findViewById(R.id.video_indicator)
     }
 }

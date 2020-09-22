@@ -16,7 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableEndCompat="@drawable/ic_arrow_drop_down_white_24dp"
-        android:textColor="@android:color/white"
+        app:drawableTint="#000"
+        android:textColor="@android:color/black"
         android:textSize="14sp" />
 
 

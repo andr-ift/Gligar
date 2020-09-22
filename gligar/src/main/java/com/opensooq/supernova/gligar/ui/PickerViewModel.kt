@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opensooq.OpenSooq.ui.imagePicker.model.AlbumItem
-import com.opensooq.OpenSooq.ui.imagePicker.model.ImageItem
+import com.opensooq.OpenSooq.ui.imagePicker.model.MediaItem
 import com.opensooq.OpenSooq.ui.imagePicker.model.ImageSource
 import com.opensooq.supernova.gligar.dataSource.ImagesDataSource
 import com.opensooq.supernova.gligar.ui.ImagePickerActivity.Companion.EXTRA_LIMIT
@@ -35,15 +35,15 @@ internal class PickerViewModel(private val savedStateHandle: SavedStateHandle) :
     internal var mNotifyPosition = MutableLiveData<Int>()
     internal var mNotifyInsert = MutableLiveData<Int>()
     internal var mAlbums = MutableLiveData<ArrayList<AlbumItem>>()
-    internal var mLastAddedImages = MutableLiveData<ArrayList<ImageItem>>()
-    internal var saveStateImages = arrayListOf<ImageItem>()
+    internal var mLastAddedImages = MutableLiveData<ArrayList<MediaItem>>()
+    internal var saveStateImages = arrayListOf<MediaItem>()
     internal var dumpImagesList = getDumItems()
     internal var mCurrentPhotoPath: String? = null
     internal var mCurrentSelectedAlbum = 0
     internal var mPage = 0
 
     private var mSelectedAlbum: AlbumItem? = null
-    private var mSelectedList = hashMapOf<String, ImageItem>()
+    private var mSelectedList = hashMapOf<String, MediaItem>()
     private var mCurrentSelection: Int = 0
     private var mLimit = 0
     private var mCameraCisabled: Boolean = true
@@ -89,7 +89,7 @@ internal class PickerViewModel(private val savedStateHandle: SavedStateHandle) :
         viewModelScope.launch() {
             val images = getImages()
             if (!isLoadMore && !mCameraCisabled) {
-                images.add(0, ImageItem("", ImageSource.CAMERA, 0))
+                images.add(0, MediaItem(false, "", ImageSource.CAMERA, 0))
             }
             mLastAddedImages.value = images
         }
@@ -104,25 +104,25 @@ internal class PickerViewModel(private val savedStateHandle: SavedStateHandle) :
         mImageDataSource.loadAlbums()
     }
 
-    internal fun addCameraItem(adapterItems: ArrayList<ImageItem>?) {
+    internal fun addCameraItem(adapterItems: ArrayList<MediaItem>?) {
         if (mCurrentPhotoPath.isNullOrEmpty()) {
             return
         }
         val imageItem =
-            ImageItem(mCurrentPhotoPath!!, ImageSource.GALLERY, getCurrentSelectionCountForCamera())
+            MediaItem(false, mCurrentPhotoPath!!, ImageSource.GALLERY, getCurrentSelectionCountForCamera())
         mSelectedList[imageItem.imagePath] = imageItem
         adapterItems?.add(1, imageItem)
         mNotifyInsert.value = 1
     }
 
 
-    internal fun setImageSelection(position: Int, adapterImageItem: ArrayList<ImageItem>?) {
-        if (adapterImageItem.isNullOrEmpty()) {
+    internal fun setImageSelection(position: Int, adapterMediaItem: ArrayList<MediaItem>?) {
+        if (adapterMediaItem.isNullOrEmpty()) {
             return
         }
-        val imageItem = adapterImageItem[position]
+        val imageItem = adapterMediaItem[position]
 
-        if (adapterImageItem[position].source == ImageSource.DUM) {
+        if (adapterMediaItem[position].source == ImageSource.DUM) {
             return
         }
 
@@ -135,7 +135,7 @@ internal class PickerViewModel(private val savedStateHandle: SavedStateHandle) :
             imageItem.selected = mCurrentSelection
             mSelectedList[imageItem.imagePath] = imageItem
         } else {
-            for ((i, mItem) in adapterImageItem.withIndex()) {
+            for ((i, mItem) in adapterMediaItem.withIndex()) {
                 if (mItem.selected > imageItem.selected) {
                     mItem.selected--
                     mNotifyPosition.value = i
@@ -165,9 +165,9 @@ internal class PickerViewModel(private val savedStateHandle: SavedStateHandle) :
         return pathsList.toTypedArray()
     }
 
-    private fun getDumItems(): ArrayList<ImageItem> {
-        val list = arrayListOf<ImageItem>()
-        for (x in 0..PAGE_SIZE) list.add(ImageItem("", ImageSource.DUM, 0))
+    private fun getDumItems(): ArrayList<MediaItem> {
+        val list = arrayListOf<MediaItem>()
+        for (x in 0..PAGE_SIZE) list.add(MediaItem(false, "", ImageSource.DUM, 0))
         return list
     }
 

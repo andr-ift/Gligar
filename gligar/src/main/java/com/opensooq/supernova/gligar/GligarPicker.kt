@@ -24,13 +24,12 @@ class GligarPicker {
     private var withFragment: Fragment? = null
     private var requestCode: Int = 0
     private var limit: Int = 10
-    private var disableCamera: Boolean = false
+    private var disableCamera: Boolean = true
     private var cameraDirect: Boolean = false
 
 
     fun requestCode(requestCode: Int) = apply { this.requestCode = requestCode }
     fun limit(limit: Int) = apply { this.limit = limit }
-    fun disableCamera(disableCamera: Boolean) = apply { this.disableCamera = disableCamera }
     fun cameraDirect(cameraDirect: Boolean) = apply { this.cameraDirect = cameraDirect }
     fun withActivity(activity: Activity) = apply { this.withActivity = activity }
     fun withFragment(fragment: Fragment) = apply { this.withFragment = fragment }

@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.opensooq.OpenSooq.ui.imagePicker.model.AlbumItem
-import com.opensooq.OpenSooq.ui.imagePicker.model.ImageItem
+import com.opensooq.OpenSooq.ui.imagePicker.model.MediaItem
 import com.opensooq.supernova.gligar.GligarPicker.Companion.IMAGES_RESULT
 import com.opensooq.supernova.gligar.R
 import com.opensooq.supernova.gligar.adapters.AlbumsAdapter
@@ -252,12 +252,7 @@ internal class ImagePickerActivity : AppCompatActivity(), LoadMoreListener.OnLoa
     }
 
     override fun onItemClicked(position: Int) {
-        when (position) {
-            0 -> openCamera()
-            else -> {
-                mainViewModel.setImageSelection(position, mImagesAdapter?.images)
-            }
-        }
+        mainViewModel.setImageSelection(position, mImagesAdapter?.images)
     }
 
     private fun observe() {
@@ -288,7 +283,7 @@ internal class ImagePickerActivity : AppCompatActivity(), LoadMoreListener.OnLoa
         })
     }
 
-    private fun addImages(it: ArrayList<ImageItem>) {
+    private fun addImages(it: ArrayList<MediaItem>) {
         loadMoreListener?.setFinished(false)
         if (it.isNullOrEmpty()) {
             loadMoreListener?.setFinished()
