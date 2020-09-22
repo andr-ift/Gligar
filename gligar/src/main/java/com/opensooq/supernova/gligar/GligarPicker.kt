@@ -2,17 +2,17 @@ package com.opensooq.supernova.gligar
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
+import com.opensooq.supernova.gligar.ui.ImagePickerActivity
 import com.opensooq.supernova.gligar.ui.ImagePickerActivity.Companion.EXTRA_CAMERA_DIRECT
 import com.opensooq.supernova.gligar.ui.ImagePickerActivity.Companion.EXTRA_DISABLE_CAMERA
 import com.opensooq.supernova.gligar.ui.ImagePickerActivity.Companion.EXTRA_LIMIT
 import com.opensooq.supernova.gligar.ui.ImagePickerActivity.Companion.startActivityForResult
-import java.lang.IllegalStateException
 
 /**
  * Created by Hani AlMomani on 30,November,2019
  */
-
 
 class GligarPicker {
 
@@ -34,6 +34,9 @@ class GligarPicker {
     fun withActivity(activity: Activity) = apply { this.withActivity = activity }
     fun withFragment(fragment: Fragment) = apply { this.withFragment = fragment }
 
+    fun showForResult(resultLauncher: ActivityResultLauncher<Intent?>) {
+        ImagePickerActivity.forResult(withActivity!!, limit, resultLauncher)
+    }
 
     fun show() {
         if(withActivity == null && withFragment ==null){
@@ -48,10 +51,9 @@ class GligarPicker {
         }
 
         if(withActivity!=null){
-            startActivityForResult(withActivity!!,requestCode,intent)
+            startActivityForResult(withActivity!!, requestCode, intent)
         }else{
-            startActivityForResult(withFragment!!,requestCode,intent)
+            startActivityForResult(withFragment!!, requestCode, intent)
         }
-
     }
 }

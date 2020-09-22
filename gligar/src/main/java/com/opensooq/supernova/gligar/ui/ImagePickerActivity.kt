@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatSpinner
@@ -65,7 +66,7 @@ internal class ImagePickerActivity : AppCompatActivity(), LoadMoreListener.OnLoa
             requestCode: Int,
             intent: Intent
         ) {
-            intent.setClass(fragment.context!!, ImagePickerActivity::class.java)
+            intent.setClass(fragment.requireContext(), ImagePickerActivity::class.java)
             fragment.startActivityForResult(intent, requestCode)
         }
 
@@ -76,6 +77,20 @@ internal class ImagePickerActivity : AppCompatActivity(), LoadMoreListener.OnLoa
         ) {
             intent.setClass(activity, ImagePickerActivity::class.java)
             activity.startActivityForResult(intent, requestCode)
+        }
+
+        fun forResult(activity: Activity, limit: Int, resultLauncher: ActivityResultLauncher<Intent?>) {
+            val intent = Intent(activity, ImagePickerActivity::class.java)
+            intent.putExtra(EXTRA_LIMIT, limit)
+            intent.putExtra(EXTRA_DISABLE_CAMERA, true)
+            resultLauncher.launch(intent)
+        }
+
+        fun forResult(fragment: Fragment, limit: Int, resultLauncher: ActivityResultLauncher<Intent?>) {
+            val intent = Intent(fragment.requireContext(), ImagePickerActivity::class.java)
+            intent.putExtra(EXTRA_LIMIT, limit)
+            intent.putExtra(EXTRA_DISABLE_CAMERA, true)
+            resultLauncher.launch(intent)
         }
     }
 
