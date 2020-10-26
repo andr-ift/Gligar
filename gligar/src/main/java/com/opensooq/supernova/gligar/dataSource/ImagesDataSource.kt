@@ -90,6 +90,7 @@ internal class ImagesDataSource(private val contentResolver: ContentResolver){
                 val bundle = Bundle().apply {
                     putInt(ContentResolver.QUERY_ARG_LIMIT, PAGE_SIZE)
                     putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
+                    putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, ORDER_BY)
                     if (albumItem != null && !albumItem.isAll) {
                         putString(
                             ContentResolver.QUERY_ARG_SQL_SELECTION,
