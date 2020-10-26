@@ -2,6 +2,7 @@ package com.opensooq.supernova.gligar.dataSource
 
 import android.content.ContentResolver
 import android.database.Cursor
+import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import com.opensooq.OpenSooq.ui.imagePicker.model.AlbumItem
@@ -85,7 +86,18 @@ internal class ImagesDataSource(private val contentResolver: ContentResolver){
         val list: ArrayList<MediaItem> = arrayListOf()
         var photoCursor: Cursor? = null
         try {
-            if (albumItem == null || albumItem.isAll) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val bundle = Bundle().apply {
+                    putInt(ContentResolver.QUERY_ARG_LIMIT, PAGE_SIZE)
+                    putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
+                    if (albumItem != null && !albumItem.isAll) {
+                        putString(
+                            ContentResolver.QUERY_ARG_SQL_SELECTION,
+                            "${MediaStore.Files.FileColumns.BUCKET_ID} =?"
+                        )
+                        putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, arrayOf(albumItem.bucketId))
+                    } else putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection)
+                }
                 photoCursor = contentResolver.query(
                     cursorUri,
                     arrayOf(
@@ -93,9 +105,8 @@ internal class ImagesDataSource(private val contentResolver: ContentResolver){
                         PATH_COLUMN,
                         MIME_TYPE
                     ),
-                    selection,
-                    null,
-                    "$ORDER_BY LIMIT $PAGE_SIZE OFFSET $offset"
+                    bundle,
+                    null
                 )
             } else {
                 photoCursor = contentResolver.query(
@@ -105,8 +116,8 @@ internal class ImagesDataSource(private val contentResolver: ContentResolver){
                         PATH_COLUMN,
                         MIME_TYPE
                     ),
-                    "${MediaStore.Files.FileColumns.BUCKET_ID} =?",
-                    arrayOf(albumItem.bucketId),
+                    if (albumItem == null || albumItem.isAll) selection else "${MediaStore.Files.FileColumns.BUCKET_ID} =?",
+                    if (albumItem == null || albumItem.isAll) null else arrayOf(albumItem.bucketId),
                     "$ORDER_BY LIMIT $PAGE_SIZE OFFSET $offset"
                 )
             }
